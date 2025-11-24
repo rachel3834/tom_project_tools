@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.dates import (MONTHLY, DateFormatter,
                               rrulewrapper, RRuleLocator, drange)
 from datetime import datetime
+import numpy as np
 
 def plot_readthedocs_traffic(args):
 
@@ -18,7 +19,6 @@ def plot_readthedocs_traffic(args):
     # Since we want to plot the total number of views per day, we need to sum
     # over each date
     traffic_stats = sum_over_dates(traffic_data)
-    print(traffic_stats)
 
     # Plot the traffic statistics as a function of time
     plot_stats_with_time(args, traffic_stats)
@@ -37,7 +37,7 @@ def plot_stats_with_time(args, traffic_stats):
     loc = RRuleLocator(rule)
 
     fig, ax = plt.subplots()
-    plt.plot_date(traffic_stats['Date'], traffic_stats['Views'], marker='.', linestyle='-')
+    plt.plot(traffic_stats['Date'], traffic_stats['Views'], marker='.', linestyle='-')
     ax.xaxis.set_major_locator(loc)
     ax.xaxis.set_major_formatter(formatter)
     ax.xaxis.set_tick_params(rotation=30, labelsize=10)
@@ -74,6 +74,11 @@ def sum_over_dates(traffic_data):
         Column(name='Date', data=dates),
         Column(name='Views', data=total_views)
     ])
+
+    median_visits = np.median(traffic_stats['Views'])
+
+    print('Median number of views per day over date range: ' + str(median_visits))
+
     return traffic_stats
 
 def load_RTD_traffic_data(args):
